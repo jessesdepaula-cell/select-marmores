@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #fbf9f5;
+  --bg-soft: #f3efe7;
+  --ink: #1a1714;
+  --ink-soft: #4a423b;
+  --muted: #7e756c;
+  --line: #e6dfd3;
+  --gold: #b08d57;
+  --gold-deep: #8a6a3a;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-gold: var(--gold);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-fraunces);
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-serif { font-family: var(--font-fraunces), "Cormorant Garamond", Georgia, serif; }
+
+/* Scroll suave */
+html { scroll-behavior: smooth; }
+
+/* Vinheta sutil de mármore no fundo */
+.marble-bg {
+  background-image:
+    radial-gradient(1200px 600px at 80% -10%, rgba(176, 141, 87, 0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 30%, rgba(176, 141, 87, 0.06), transparent 60%);
+}
+
+/* Ornamento de letra com filete dourado */
+.gold-divider {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--gold);
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.gold-divider::before,
+.gold-divider::after {
+  content: '';
+  width: 36px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.6;
+}
+
+/* Botão dourado principal */
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.6rem;
+  background: var(--ink);
+  color: #f6ecd9;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--ink);
+  transition: background .2s, color .2s, transform .2s;
+}
+.btn-gold:hover { background: var(--gold-deep); border-color: var(--gold-deep); color: #fff; transform: translateY(-1px); }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1.6rem;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transition: background .2s, color .2s;
+}
+.btn-ghost:hover { background: var(--ink); color: #f6ecd9; }
+
+/* Inputs */
+.field {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.field:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(176, 141, 87, 0.18); }
+
+/* Status badges */
+.badge { display:inline-flex; align-items:center; padding:.2rem .6rem; font-size:.72rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase; border-radius:999px; }
+.badge-novo              { background:#eaf3ff; color:#1e4fa8; }
+.badge-em_contato        { background:#fff6e0; color:#8a5a00; }
+.badge-orcamento_enviado { background:#f1eaff; color:#5a3aa8; }
+.badge-convertido        { background:#e6f7ec; color:#216b3a; }
+.badge-perdido           { background:#fbe6e6; color:#8a2a2a; }
+
+/* Subtle marble veining via SVG noise on cards */
+.veined {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f8f4ec, #efe8db);
+}
+.veined::after {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(120% 80% at 30% 20%, transparent 50%, rgba(176,141,87,.10) 70%, transparent 80%),
+              radial-gradient(140% 70% at 70% 80%, transparent 50%, rgba(0,0,0,.04) 70%, transparent 85%);
+  pointer-events:none;
+}
+
+/* Scroll reveal helper */
+.reveal { opacity:0; transform: translateY(12px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.is-in { opacity:1; transform: translateY(0); }
