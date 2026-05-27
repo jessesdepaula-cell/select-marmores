@@ -1,86 +1,142 @@
-const groups = [
+'use client';
+
+import { useState } from 'react';
+
+type Stone = { name: string; tone: string };
+type Category = { id: string; label: string; items: Stone[] };
+
+const categories: Category[] = [
   {
-    name: 'Mármores',
-    color: 'from-[#f5efe3] to-[#e6dac4]',
-    items: ['Carrara', 'Calacatta', 'Estatuário', 'Travertino', 'Crema Marfil', 'Emperador'],
+    id: 'marmore',
+    label: 'Mármore',
+    items: [
+      { name: 'Carrara', tone: 'from-[#f6f3ec] to-[#cfc8b8]' },
+      { name: 'Calacatta', tone: 'from-[#f3ede2] to-[#a89878]' },
+      { name: 'Estatuário', tone: 'from-[#f4f1ea] to-[#c0b6a0]' },
+      { name: 'Crema Marfil', tone: 'from-[#f1e8d3] to-[#c2a878]' },
+      { name: 'Emperador', tone: 'from-[#6b4d33] to-[#3d2a1c]' },
+      { name: 'Travertino Romano', tone: 'from-[#ede1cb] to-[#b2956b]' },
+      { name: 'Pighês', tone: 'from-[#ecebe6] to-[#b8b3a4]' },
+      { name: 'Botticino', tone: 'from-[#f1ead7] to-[#b59e6e]' },
+    ],
   },
   {
-    name: 'Granitos',
-    color: 'from-[#3a342f] to-[#1b1815]',
-    dark: true,
-    items: ['Preto São Gabriel', 'Verde Ubatuba', 'Branco Itaúnas', 'Vermelho Capão Bonito'],
+    id: 'granito',
+    label: 'Granito',
+    items: [
+      { name: 'Preto São Gabriel', tone: 'from-[#2c2823] to-[#0d0c0a]' },
+      { name: 'Branco Itaúnas',   tone: 'from-[#e8e6df] to-[#a8a59a]' },
+      { name: 'Verde Ubatuba',    tone: 'from-[#1d2920] to-[#0a120c]' },
+      { name: 'Vermelho Capão',   tone: 'from-[#5b1a18] to-[#2a0a09]' },
+      { name: 'Amarelo Ornamental', tone: 'from-[#d2a463] to-[#7a5a1f]' },
+      { name: 'Branco Siena',     tone: 'from-[#eee9dc] to-[#aea486]' },
+      { name: 'Azul Bahia',       tone: 'from-[#1a3f6b] to-[#0b1e36]' },
+      { name: 'Marrom Imperial',  tone: 'from-[#4a2f1a] to-[#1f120a]' },
+    ],
   },
   {
-    name: 'Quartzitos',
-    color: 'from-[#eef1ee] to-[#c8d3d0]',
-    items: ['Taj Mahal', 'Mont Blanc', 'Patagonia', 'Azul Macaúbas', 'Iceberg'],
+    id: 'quartzito',
+    label: 'Quartzito',
+    items: [
+      { name: 'Taj Mahal',       tone: 'from-[#f3eee0] to-[#bdae87]' },
+      { name: 'Mont Blanc',      tone: 'from-[#f4f3ee] to-[#b8b4a5]' },
+      { name: 'Patagonia',       tone: 'from-[#e2dfd6] to-[#7c736a]' },
+      { name: 'Azul Macaúbas',   tone: 'from-[#2c4d6a] to-[#13283c]' },
+      { name: 'Iceberg',         tone: 'from-[#eaeef0] to-[#9ab0b8]' },
+      { name: 'Mediterrâneo',    tone: 'from-[#dfe6e8] to-[#7d8d92]' },
+      { name: 'Sahara',          tone: 'from-[#ead9ba] to-[#a0825b]' },
+      { name: 'Cristallo',       tone: 'from-[#f1ede4] to-[#bdae95]' },
+    ],
   },
   {
-    name: 'Ônix & Exóticas',
-    color: 'from-[#f0e7d8] to-[#c9a87a]',
-    items: ['Ônix Mel', 'Ônix Verde', 'Ônix Branco', 'Sodalita Azul'],
+    id: 'onix',
+    label: 'Ônix',
+    items: [
+      { name: 'Ônix Mel',     tone: 'from-[#e8c982] to-[#6b3f0e]' },
+      { name: 'Ônix Verde',   tone: 'from-[#7c8f5a] to-[#2d3a18]' },
+      { name: 'Ônix Branco',  tone: 'from-[#f3ecd9] to-[#b7a877]' },
+      { name: 'Ônix Lemon',   tone: 'from-[#f3e69b] to-[#a78318]' },
+      { name: 'Verde Guatemala', tone: 'from-[#2a4631] to-[#0e1c14]' },
+      { name: 'Sodalita Azul',   tone: 'from-[#1f3e6e] to-[#0a1830]' },
+    ],
   },
   {
-    name: 'Ultracompactos',
-    color: 'from-[#e8e4dd] to-[#b8b1a4]',
-    items: ['Dekton®', 'Neolith®', 'Silestone®', 'Lâminas porcelânicas'],
+    id: 'quartzo',
+    label: 'Quartzo',
+    items: [
+      { name: 'Branco Absoluto', tone: 'from-[#f7f6f1] to-[#cfcdc4]' },
+      { name: 'Cinza Concreto',  tone: 'from-[#bcbab5] to-[#6f6e6a]' },
+      { name: 'Calacatta Quartzo', tone: 'from-[#f3eee2] to-[#aea08b]' },
+      { name: 'Silestone Eternal', tone: 'from-[#efece4] to-[#a89e8b]' },
+      { name: 'Bianco Crystal',    tone: 'from-[#f4f3ee] to-[#cac6b8]' },
+      { name: 'Negro Tebas',       tone: 'from-[#22201d] to-[#0b0a09]' },
+    ],
   },
   {
-    name: 'Quartzo',
-    color: 'from-[#f6f4ef] to-[#d6cdb8]',
-    items: ['Branco absoluto', 'Cinza concreto', 'Calacatta sintético'],
+    id: 'ultracompacto',
+    label: 'Lâmina Ultracompacta',
+    items: [
+      { name: 'Dekton® Aura',    tone: 'from-[#f4f1ea] to-[#bdb6a4]' },
+      { name: 'Dekton® Kelya',   tone: 'from-[#41403d] to-[#1a1a18]' },
+      { name: 'Neolith® Calacatta', tone: 'from-[#f3eee3] to-[#b4a78a]' },
+      { name: 'Neolith® Iron Moss', tone: 'from-[#3b3d35] to-[#181a15]' },
+      { name: 'Porcelânico Sahara', tone: 'from-[#eadab5] to-[#9f7c3e]' },
+      { name: 'Porcelânico Concreto', tone: 'from-[#c1bfb9] to-[#74716b]' },
+    ],
   },
 ];
 
 export default function Materials() {
+  const [active, setActive] = useState(categories[0].id);
+  const current = categories.find((c) => c.id === active)!;
+
   return (
-    <section id="materiais" className="py-24">
+    <section id="materiais" className="py-24 sm:py-32 bg-[var(--bg-soft)]">
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <div className="flex flex-col items-center text-center">
-          <span className="gold-divider">Materiais</span>
-          <h2 className="mt-5 font-serif text-3xl sm:text-4xl leading-tight max-w-2xl">
+        <div className="text-center">
+          <span className="eyebrow">Materiais</span>
+          <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight max-w-3xl mx-auto">
             Mais de 60 pedras nobres
             <span className="italic"> para a sua obra.</span>
           </h2>
-          <p className="mt-5 text-[var(--ink-soft)] max-w-xl">
-            Nossa curadoria reúne clássicos italianos, exóticos brasileiros e os
-            ultracompactos de última geração. Tudo pronto para ser visto pessoalmente.
+          <p className="mt-6 text-[var(--ink-soft)] max-w-xl mx-auto">
+            Clássicos italianos, exóticos brasileiros e ultracompactos de última
+            geração — todos prontos para serem vistos pessoalmente.
           </p>
         </div>
 
-        <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {groups.map((g) => (
-            <div
-              key={g.name}
-              className="group relative overflow-hidden border border-[var(--line)] aspect-[4/5]"
+        <div className="mt-12 flex flex-wrap justify-center gap-2">
+          {categories.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => setActive(c.id)}
+              className={`text-xs uppercase tracking-[0.2em] px-5 py-2.5 border transition-colors ${
+                active === c.id
+                  ? 'bg-[var(--ink)] text-white border-[var(--ink)]'
+                  : 'bg-white text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--ink)]'
+              }`}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${g.color}`} />
-              <div className="absolute inset-0 opacity-[0.25] mix-blend-overlay"
-                   style={{
-                     backgroundImage:
-                       "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 600'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0 0.06 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
-                   }}
-              />
-              <div className={`relative h-full flex flex-col justify-between p-6 ${g.dark ? 'text-[#f6ecd9]' : 'text-[var(--ink)]'}`}>
-                <div>
-                  <span className={`text-[10px] tracking-[0.25em] uppercase ${g.dark ? 'text-[#d6c4a3]' : 'text-[var(--gold-deep)]'}`}>
-                    Coleção
-                  </span>
-                  <h3 className="mt-2 font-serif text-2xl">{g.name}</h3>
-                </div>
-                <ul className="space-y-1 text-sm">
-                  {g.items.map((i) => (
-                    <li key={i} className={g.dark ? 'text-[#e8dcc1]' : 'text-[var(--ink-soft)]'}>· {i}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+              {c.label}
+            </button>
           ))}
         </div>
 
-        <div className="mt-12 text-center">
-          <a href="#contato" className="btn-ghost">Quero ver pessoalmente</a>
+        <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {current.items.map((s) => (
+            <figure
+              key={s.name}
+              className={`group relative aspect-square overflow-hidden border border-[var(--line)] stone-base bg-gradient-to-br ${s.tone}`}
+            >
+              <figcaption className="absolute inset-x-0 bottom-0 bg-white py-3 px-4 border-t border-[var(--line)]">
+                <span className="text-sm font-medium text-[var(--ink)]">{s.name}</span>
+              </figcaption>
+            </figure>
+          ))}
         </div>
+
+        <p className="mt-10 text-center text-sm text-[var(--muted)]">
+          E muito mais. Acima são apenas alguns destaques da nossa curadoria.
+        </p>
       </div>
     </section>
   );

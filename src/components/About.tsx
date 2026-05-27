@@ -1,67 +1,38 @@
-import { Compass, Hammer, ShieldCheck, Sparkles } from 'lucide-react';
-
-const pillars = [
-  {
-    icon: Compass,
-    title: 'Curadoria de pedras',
-    desc: 'Visitamos os depósitos com você. Você marca a chapa exata que vai entrar na sua obra.',
-  },
-  {
-    icon: Hammer,
-    title: 'Corte de precisão',
-    desc: 'CNC e bancada artesanal em diálogo: encaixes milimétricos, frisos retos, recortes limpos.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Instalação cuidadosa',
-    desc: 'Equipe própria, sem terceirização. Acompanhamento da medição à última junta de rejunte.',
-  },
-  {
-    icon: Sparkles,
-    title: 'Acabamento de autor',
-    desc: 'Polimento, levigado, escovado, flameado — cada superfície fica como o projeto pediu.',
-  },
-];
-
 export default function About() {
   return (
-    <section id="sobre" className="py-24 bg-[var(--bg-soft)]">
-      <div className="max-w-7xl mx-auto px-5 sm:px-8">
-        <div className="grid lg:grid-cols-[1fr_1.2fr] gap-12 items-start">
-          <div className="lg:sticky lg:top-28">
-            <span className="gold-divider">Quem somos</span>
-            <h2 className="mt-5 font-serif text-3xl sm:text-4xl leading-tight">
-              Uma marmoraria que se comporta
-              <span className="italic"> como um ateliê.</span>
-            </h2>
-            <p className="mt-6 text-[var(--ink-soft)] leading-relaxed">
-              Atendemos arquitetos, designers e proprietários que enxergam a
-              pedra como elemento de projeto — não como acabamento de catálogo.
-              Nosso compromisso é com a escolha certa: o veio, o tom, a
-              espessura, o casamento entre as peças.
-            </p>
-            <p className="mt-4 text-[var(--ink-soft)] leading-relaxed">
-              Atuamos em Goiânia, Aparecida de Goiânia e cidades vizinhas, com
-              entregas pontuais para todo o Centro-Oeste.
-            </p>
-          </div>
+    <section id="sobre" className="py-24 sm:py-32 bg-[var(--bg)]">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 text-center">
+        <span className="eyebrow">Quem somos</span>
+        <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight max-w-3xl mx-auto">
+          A virada de chave entre o
+          <span className="italic"> projeto e a obra-prima.</span>
+        </h2>
+        <p className="mt-8 text-[var(--ink-soft)] leading-relaxed text-lg max-w-3xl mx-auto">
+          Somos uma marmoraria que se comporta como um ateliê. Cada chapa é
+          escolhida com você, cada recorte é projetado em planta, cada peça é
+          instalada pela nossa equipe — sem terceirização, sem surpresa em obra.
+        </p>
+        <p className="mt-4 text-[var(--ink-soft)] leading-relaxed max-w-2xl mx-auto">
+          Atendemos arquitetos, designers e proprietários em Goiânia, Aparecida
+          de Goiânia, Anápolis, Brasília e todo o Centro-Oeste.
+        </p>
 
-          <div className="grid sm:grid-cols-2 gap-4">
-            {pillars.map((p) => (
-              <div
-                key={p.title}
-                className="bg-[var(--bg)] border border-[var(--line)] p-6 hover:border-[var(--gold)] transition-colors"
-              >
-                <p.icon size={22} className="text-[var(--gold-deep)]" />
-                <h3 className="mt-4 font-serif text-xl">{p.title}</h3>
-                <p className="mt-2 text-sm text-[var(--ink-soft)] leading-relaxed">
-                  {p.desc}
-                </p>
-              </div>
-            ))}
-          </div>
+        <div className="mt-14 grid grid-cols-2 lg:grid-cols-4 gap-px bg-[var(--line)] border border-[var(--line)] max-w-4xl mx-auto">
+          <Stat n="+12" label="Anos de obra" />
+          <Stat n="+60" label="Pedras em estoque" />
+          <Stat n="+800" label="Projetos entregues" />
+          <Stat n="100%" label="Instalação própria" />
         </div>
       </div>
     </section>
+  );
+}
+
+function Stat({ n, label }: { n: string; label: string }) {
+  return (
+    <div className="bg-white py-8 px-4">
+      <div className="font-serif text-3xl sm:text-4xl">{n}</div>
+      <div className="mt-2 text-xs uppercase tracking-[0.2em] text-[var(--muted)]">{label}</div>
+    </div>
   );
 }

@@ -1,21 +1,40 @@
 'use client';
 
 import { useState } from 'react';
-import { Loader2, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Loader2, CheckCircle2 } from 'lucide-react';
 
 const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '5562946506300';
 const WHATSAPP_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? '(62) 9465-0630';
+
+const TYPES = [
+  'Pias', 'Ilhas', 'Bancadas', 'Lavatórios',
+  'Lareiras', 'Piscinas', 'Churrasqueiras', 'Revestimentos',
+];
 
 type State = 'idle' | 'sending' | 'sent' | 'error';
 
 export default function LeadForm() {
   const [state, setState] = useState<State>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
+
+  function toggle(t: string) {
+    setSelected((s) => (s.includes(t) ? s.filter((x) => x !== t) : [...s, t]));
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const f = e.currentTarget;
-    const data = Object.fromEntries(new FormData(f).entries());
+    const fd = new FormData(f);
+    const payload = {
+      nome:      fd.get('nome'),
+      telefone:  fd.get('telefone'),
+      email:     fd.get('email'),
+      cidade:    fd.get('cidade'),
+      tipo_obra: selected.join(', '),
+      materiais: fd.get('materiais'),
+      mensagem:  fd.get('mensagem'),
+    };
 
     setState('sending');
     setError(null);
@@ -23,12 +42,13 @@ export default function LeadForm() {
       const res = await fetch('/api/leads', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
       const json = await res.json();
       if (!res.ok || !json.ok) throw new Error(json.error ?? 'Falha ao enviar');
       setState('sent');
       f.reset();
+      setSelected([]);
     } catch (err) {
       setState('error');
       setError(err instanceof Error ? err.message : 'Falha ao enviar');
@@ -36,93 +56,111 @@ export default function LeadForm() {
   }
 
   return (
-    <section id="contato" className="py-24 bg-[var(--ink)] text-[#f6ecd9]">
-      <div className="max-w-6xl mx-auto px-5 sm:px-8 grid lg:grid-cols-[1fr_1.2fr] gap-12">
+    <section id="contato" className="py-24 sm:py-32 bg-[var(--ink)] text-white">
+      <div className="max-w-6xl mx-auto px-5 sm:px-8 grid lg:grid-cols-[1fr_1.3fr] gap-14 items-start">
         <div>
-          <span className="gold-divider !text-[#d6b878]">Solicitar orçamento</span>
-          <h2 className="mt-5 font-serif text-3xl sm:text-4xl leading-tight">
+          <span className="eyebrow !text-white/70">Solicitar orçamento</span>
+          <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight">
             Conte sobre o seu projeto.
-            <span className="block italic text-[#d6b878]">A gente responde no mesmo dia.</span>
+            <span className="block italic font-light">Respondemos no mesmo dia.</span>
           </h2>
-          <p className="mt-6 text-[#d8ccae] leading-relaxed max-w-md">
+          <p className="mt-6 text-white/75 leading-relaxed max-w-md">
             Preencha o formulário ou fale direto pelo WhatsApp. Em até 24 horas
-            agendamos uma visita ao showroom ou uma medição em obra, conforme o
+            agendamos uma visita ao showroom ou medição em obra, conforme o
             estágio do seu projeto.
           </p>
 
           <div className="mt-10 space-y-3 text-sm">
             <a
-              href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Olá! Vim pelo site e quero um orçamento.')}`}
+              href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Olá! Vim pelo site da Select Mármores e quero um orçamento.')}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-[#d6b878] hover:underline"
+              className="block text-white hover:text-white/80"
             >
-              WhatsApp: {WHATSAPP_DISPLAY}
+              <span className="text-white/60 text-xs uppercase tracking-wider block">WhatsApp</span>
+              <span className="text-lg font-medium">{WHATSAPP_DISPLAY}</span>
             </a>
-            <p className="text-[#d8ccae]">Atendimento de seg. a sáb., das 8h às 18h</p>
-            <p className="text-[#d8ccae]">Goiânia · Aparecida de Goiânia · Anápolis · Brasília</p>
+            <div>
+              <span className="text-white/60 text-xs uppercase tracking-wider block">Endereço</span>
+              <span>Av. Uru, Qd. 91 — Aparecida de Goiânia, GO</span>
+            </div>
+            <div>
+              <span className="text-white/60 text-xs uppercase tracking-wider block">Horário</span>
+              <span>Seg. a sex. 8h–18h · Sáb. 8h–13h</span>
+            </div>
           </div>
         </div>
 
-        <form onSubmit={onSubmit} className="bg-[#f6ecd9] text-[var(--ink)] p-6 sm:p-8 grid gap-4 grid-cols-1 sm:grid-cols-2">
-          <div className="sm:col-span-2">
-            <label className="text-xs uppercase tracking-wider text-[var(--muted)]">Nome completo *</label>
-            <input required name="nome" className="field mt-1" placeholder="Como podemos te chamar?" />
+        <form onSubmit={onSubmit} className="bg-white text-[var(--ink)] p-6 sm:p-10 space-y-5">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2">
+              <label className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Nome completo *</label>
+              <input required name="nome" className="field mt-2" />
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Telefone *</label>
+              <input required name="telefone" className="field mt-2" placeholder="(00) 00000-0000" />
+            </div>
+            <div>
+              <label className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">E-mail</label>
+              <input type="email" name="email" className="field mt-2" />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Cidade</label>
+              <input name="cidade" className="field mt-2" />
+            </div>
           </div>
+
           <div>
-            <label className="text-xs uppercase tracking-wider text-[var(--muted)]">Telefone *</label>
-            <input required name="telefone" className="field mt-1" placeholder="(00) 00000-0000" />
+            <label className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Onde vai entrar a pedra?</label>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {TYPES.map((t) => {
+                const on = selected.includes(t);
+                return (
+                  <button
+                    type="button"
+                    key={t}
+                    onClick={() => toggle(t)}
+                    className={`px-4 py-2 border text-sm transition-colors ${
+                      on
+                        ? 'bg-[var(--ink)] text-white border-[var(--ink)]'
+                        : 'bg-white text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--ink)]'
+                    }`}
+                  >
+                    {t}
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
           <div>
-            <label className="text-xs uppercase tracking-wider text-[var(--muted)]">E-mail</label>
-            <input type="email" name="email" className="field mt-1" placeholder="opcional" />
+            <label className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Materiais de interesse</label>
+            <input name="materiais" className="field mt-2" placeholder="Mármore, quartzito, granito..." />
           </div>
+
           <div>
-            <label className="text-xs uppercase tracking-wider text-[var(--muted)]">Cidade</label>
-            <input name="cidade" className="field mt-1" placeholder="Goiânia, Brasília..." />
-          </div>
-          <div>
-            <label className="text-xs uppercase tracking-wider text-[var(--muted)]">Tipo de obra</label>
-            <select name="tipo_obra" className="field mt-1 bg-white" defaultValue="">
-              <option value="" disabled>Selecione...</option>
-              <option>Residencial — cozinha</option>
-              <option>Residencial — banheiro</option>
-              <option>Residencial — área externa</option>
-              <option>Comercial</option>
-              <option>Reforma pontual</option>
-              <option>Outro</option>
-            </select>
-          </div>
-          <div className="sm:col-span-2">
-            <label className="text-xs uppercase tracking-wider text-[var(--muted)]">Materiais de interesse</label>
-            <input name="materiais" className="field mt-1" placeholder="Mármore, quartzito, granito..." />
-          </div>
-          <div className="sm:col-span-2">
-            <label className="text-xs uppercase tracking-wider text-[var(--muted)]">Mensagem</label>
-            <textarea name="mensagem" rows={4} className="field mt-1 resize-none" placeholder="Conte um pouco sobre o ambiente, prazo, referências..." />
+            <label className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Mensagem</label>
+            <textarea name="mensagem" rows={4} className="field mt-2 resize-none" placeholder="Conte um pouco sobre o ambiente, prazo, referências..." />
           </div>
 
           {error && (
-            <div className="sm:col-span-2 text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2">
-              {error}
-            </div>
+            <div className="text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2">{error}</div>
           )}
 
-          <div className="sm:col-span-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-2">
-            <p className="text-xs text-[var(--muted)]">
-              Ao enviar, você concorda em receber retorno por telefone ou WhatsApp.
-            </p>
-            <button
-              type="submit"
-              disabled={state === 'sending'}
-              className="btn-gold disabled:opacity-70"
-            >
-              {state === 'sending' && <Loader2 size={18} className="animate-spin" />}
-              {state === 'sent' && <CheckCircle2 size={18} />}
-              {state !== 'sending' && state !== 'sent' && <ArrowRight size={18} />}
-              {state === 'sent' ? 'Recebido! Em breve falamos.' : 'Enviar pedido'}
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={state === 'sending'}
+            className="btn w-full disabled:opacity-70"
+          >
+            {state === 'sending' && <Loader2 size={18} className="animate-spin" />}
+            {state === 'sent' && <CheckCircle2 size={18} />}
+            {state === 'sent' ? 'Recebido! Em breve falamos.' : 'Enviar pedido de orçamento'}
+          </button>
+
+          <p className="text-[11px] text-[var(--muted)] text-center">
+            Ao enviar, você autoriza nosso contato por telefone, e-mail ou WhatsApp.
+          </p>
         </form>
       </div>
     </section>

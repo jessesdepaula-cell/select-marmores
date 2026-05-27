@@ -1,76 +1,40 @@
-import { ArrowRight } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Hero() {
   return (
-    <section id="topo" className="relative pt-28 pb-20 sm:pt-36 sm:pb-28 marble-bg overflow-hidden">
+    <section id="topo" className="relative min-h-[100svh] flex items-center text-white overflow-hidden">
+      {/* Background */}
       <div className="absolute inset-0 -z-10">
-        <div
-          className="absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 800'><filter id='n'><feTurbulence baseFrequency='0.7' numOctaves='2' seed='3'/><feColorMatrix values='0 0 0 0 0.69 0 0 0 0 0.55 0 0 0 0 0.34 0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")",
-          }}
+        <Image
+          src="/brand/onyx-miele.jpg"
+          alt=""
+          fill
+          priority
+          className="object-cover"
         />
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black/70" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 grid lg:grid-cols-[1.1fr_1fr] gap-12 items-center">
-        <div>
-          <span className="gold-divider">Marmoraria de autor · Goiânia</span>
-          <h1 className="mt-6 font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight">
-            Cada pedra escolhida
-            <span className="block italic text-[var(--gold-deep)]">a quatro mãos.</span>
-          </h1>
-          <p className="mt-6 text-lg text-[var(--ink-soft)] max-w-xl leading-relaxed">
-            Selecionamos chapas de mármore, granito, quartzito e ultracompactos,
-            projetamos os recortes e entregamos a obra instalada — com o veio na
-            posição certa e o acabamento que sua arquitetura merece.
-          </p>
-
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#contato" className="btn-gold">
-              Solicitar orçamento <ArrowRight size={18} />
-            </a>
-            <a href="#materiais" className="btn-ghost">
-              Ver materiais
-            </a>
-          </div>
-
-          <dl className="mt-12 grid grid-cols-3 gap-6 max-w-md">
-            <div>
-              <dt className="text-3xl font-serif text-[var(--ink)]">+12</dt>
-              <dd className="text-xs uppercase tracking-wider text-[var(--muted)] mt-1">
-                Anos de obra
-              </dd>
-            </div>
-            <div>
-              <dt className="text-3xl font-serif text-[var(--ink)]">+60</dt>
-              <dd className="text-xs uppercase tracking-wider text-[var(--muted)] mt-1">
-                Pedras em estoque
-              </dd>
-            </div>
-            <div>
-              <dt className="text-3xl font-serif text-[var(--ink)]">+800</dt>
-              <dd className="text-xs uppercase tracking-wider text-[var(--muted)] mt-1">
-                Projetos entregues
-              </dd>
-            </div>
-          </dl>
+      <div className="max-w-5xl mx-auto px-5 sm:px-8 py-32 text-center">
+        <span className="eyebrow !text-white/80">Marmoraria · Goiânia</span>
+        <h1 className="mt-6 font-serif text-4xl sm:text-6xl lg:text-7xl leading-[1.05] tracking-tight">
+          Você seleciona a pedra.
+          <span className="block italic font-light">Entregamos a obra-prima.</span>
+        </h1>
+        <p className="mt-8 text-base sm:text-lg text-white/85 max-w-2xl mx-auto leading-relaxed">
+          Mármore, granito, quartzito, ônix e ultracompactos. Curadoria de chapas,
+          projeto, corte e instalação — tudo executado pela nossa equipe.
+        </p>
+        <div className="mt-10 flex flex-wrap justify-center gap-3">
+          <a href="#contato" className="btn-light">Faça um orçamento</a>
+          <a href="#materiais" className="btn-outline !border-white !text-white hover:!bg-white hover:!text-[var(--ink)]">Ver materiais</a>
         </div>
+      </div>
 
-        <div className="relative">
-          <div className="aspect-[4/5] veined shadow-[0_30px_80px_-30px_rgba(0,0,0,0.35)]">
-            <div className="absolute inset-0 flex flex-col justify-end p-6">
-              <div className="bg-[var(--bg)]/85 backdrop-blur-sm border border-[var(--line)] p-5">
-                <span className="gold-divider !text-[10px]">Selo da casa</span>
-                <p className="mt-3 font-serif text-xl leading-snug">
-                  &ldquo;A pedra certa transforma um cômodo em peça de arquitetura.&rdquo;
-                </p>
-                <p className="mt-2 text-sm text-[var(--muted)]">— Equipe Select</p>
-              </div>
-            </div>
-          </div>
-          <div className="hidden lg:block absolute -bottom-8 -left-8 w-40 h-40 veined border border-[var(--line)]" />
-        </div>
+      {/* Bottom indicator */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 text-xs uppercase tracking-[0.3em]">
+        Role para descobrir
       </div>
     </section>
   );

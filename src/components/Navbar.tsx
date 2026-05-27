@@ -1,14 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
 
 const links = [
-  { href: '#sobre', label: 'Sobre' },
+  { href: '#sobre',     label: 'Quem somos' },
   { href: '#materiais', label: 'Materiais' },
-  { href: '#projetos', label: 'Projetos' },
-  { href: '#processo', label: 'Processo' },
-  { href: '#contato', label: 'Contato' },
+  { href: '#projetos',  label: 'Projetos' },
+  { href: '#depoimentos', label: 'Depoimentos' },
 ];
 
 export default function Navbar() {
@@ -26,18 +26,24 @@ export default function Navbar() {
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all ${
         scrolled
-          ? 'bg-[var(--bg)]/90 backdrop-blur border-b border-[var(--line)]'
+          ? 'bg-white/95 backdrop-blur border-b border-[var(--line)]'
           : 'bg-transparent'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-5 sm:px-8 h-16 flex items-center justify-between">
-        <a href="#topo" className="flex items-center gap-2 font-serif text-lg tracking-wide">
-          <span className="inline-block w-2.5 h-2.5 rotate-45 bg-[var(--gold)]" />
-          <span className="font-medium">SELECT</span>
-          <span className="text-[var(--muted)] font-light">MÁRMORES</span>
+      <div className="max-w-7xl mx-auto px-5 sm:px-8 h-20 flex items-center justify-between">
+        <a href="#topo" aria-label="Select Mármores" className="flex items-center">
+          <Image
+            src="/brand/logo.png"
+            alt="Select Mármores"
+            width={140}
+            height={40}
+            priority
+            className={scrolled ? 'invert' : 'invert brightness-0'}
+            style={{ filter: scrolled ? 'invert(1) brightness(0)' : 'invert(0) brightness(0)' }}
+          />
         </a>
 
-        <nav className="hidden md:flex items-center gap-7 text-sm text-[var(--ink-soft)]">
+        <nav className="hidden md:flex items-center gap-8 text-sm text-[var(--ink-soft)]">
           {links.map((l) => (
             <a key={l.href} href={l.href} className="hover:text-[var(--ink)] transition-colors">
               {l.label}
@@ -45,13 +51,13 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <a href="#contato" className="hidden md:inline-flex btn-gold !py-2.5 !px-5 text-sm">
-          Solicitar orçamento
+        <a href="#contato" className="hidden md:inline-flex btn !py-2.5 !px-5 text-xs">
+          Faça um orçamento
         </a>
 
         <button
           aria-label="Menu"
-          className="md:hidden p-2 -mr-2"
+          className="md:hidden p-2 -mr-2 text-[var(--ink)]"
           onClick={() => setOpen((v) => !v)}
         >
           {open ? <X size={22} /> : <Menu size={22} />}
@@ -59,7 +65,7 @@ export default function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-[var(--bg)] border-t border-[var(--line)]">
+        <div className="md:hidden bg-white border-t border-[var(--line)]">
           <div className="px-5 py-4 flex flex-col gap-3">
             {links.map((l) => (
               <a
@@ -71,8 +77,8 @@ export default function Navbar() {
                 {l.label}
               </a>
             ))}
-            <a href="#contato" onClick={() => setOpen(false)} className="btn-gold mt-2">
-              Solicitar orçamento
+            <a href="#contato" onClick={() => setOpen(false)} className="btn mt-2">
+              Faça um orçamento
             </a>
           </div>
         </div>
