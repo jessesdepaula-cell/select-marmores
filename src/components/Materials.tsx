@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Reveal } from './Reveal';
 
 type Stone = { name: string; tone: string };
 type Category = { id: string; label: string; items: Stone[] };
@@ -94,15 +96,21 @@ export default function Materials() {
     <section id="materiais" className="py-24 sm:py-32 bg-[var(--bg-soft)]">
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <div className="text-center">
-          <span className="eyebrow">Materiais</span>
-          <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight max-w-3xl mx-auto">
-            Mais de 60 pedras nobres
-            <span className="italic accent"> para a sua obra.</span>
-          </h2>
-          <p className="mt-6 text-[var(--ink-soft)] max-w-xl mx-auto">
-            Clássicos italianos, exóticos brasileiros e ultracompactos de última
-            geração — todos prontos para serem vistos pessoalmente.
-          </p>
+          <Reveal>
+            <span className="eyebrow">Materiais</span>
+          </Reveal>
+          <Reveal delay={1}>
+            <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight max-w-3xl mx-auto">
+              Mais de 60 pedras nobres
+              <span className="italic accent"> para a sua obra.</span>
+            </h2>
+          </Reveal>
+          <Reveal delay={2}>
+            <p className="mt-6 text-[var(--ink-soft)] max-w-xl mx-auto">
+              Clássicos italianos, exóticos brasileiros e ultracompactos de última
+              geração — todos prontos para serem vistos pessoalmente.
+            </p>
+          </Reveal>
         </div>
 
         <div className="mt-12 flex flex-wrap justify-center gap-2">
@@ -121,18 +129,31 @@ export default function Materials() {
           ))}
         </div>
 
-        <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {current.items.map((s) => (
-            <figure
-              key={s.name}
-              className={`group relative aspect-square overflow-hidden border border-[var(--line)] stone-base bg-gradient-to-br ${s.tone}`}
-            >
-              <figcaption className="absolute inset-x-0 bottom-0 bg-white py-3 px-4 border-t border-[var(--line)]">
-                <span className="text-sm font-medium text-[var(--ink)]">{s.name}</span>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={current.id}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
+          >
+            {current.items.map((s, i) => (
+              <motion.figure
+                key={s.name}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.04, duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -4 }}
+                className={`group relative aspect-square overflow-hidden border border-[var(--line)] stone-base bg-gradient-to-br ${s.tone} transition-shadow hover:shadow-[0_20px_40px_-20px_rgba(0,0,0,0.35)]`}
+              >
+                <figcaption className="absolute inset-x-0 bottom-0 bg-white py-3 px-4 border-t border-[var(--line)]">
+                  <span className="text-sm font-medium text-[var(--ink)]">{s.name}</span>
+                </figcaption>
+              </motion.figure>
+            ))}
+          </motion.div>
+        </AnimatePresence>
 
         <p className="mt-10 text-center text-sm text-[var(--muted)]">
           E muito mais. Acima são apenas alguns destaques da nossa curadoria.

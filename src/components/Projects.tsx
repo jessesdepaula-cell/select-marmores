@@ -1,3 +1,8 @@
+'use client';
+
+import { motion } from 'framer-motion';
+import { Reveal } from './Reveal';
+
 const projects = [
   { tag: 'Cozinha gourmet',   title: 'Ilha monolítica em quartzito Mont Blanc',  city: 'Goiânia · GO',     tone: 'from-[#f1ece1] to-[#a89878]' },
   { tag: 'Cozinha',           title: 'Bancada e testeira em Calacatta',          city: 'Brasília · DF',    tone: 'from-[#ece6db] to-[#8c7a5a]' },
@@ -14,17 +19,24 @@ export default function Projects() {
     <section id="projetos" className="py-24 sm:py-32 bg-[var(--bg)]">
       <div className="max-w-7xl mx-auto px-5 sm:px-8">
         <div className="text-center">
-          <span className="eyebrow">Projetos</span>
-          <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight max-w-3xl mx-auto">
-            Obras que transformam
-            <span className="italic accent"> ambientes.</span>
-          </h2>
+          <Reveal><span className="eyebrow">Projetos</span></Reveal>
+          <Reveal delay={1}>
+            <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight max-w-3xl mx-auto">
+              Obras que transformam
+              <span className="italic accent"> ambientes.</span>
+            </h2>
+          </Reveal>
         </div>
 
         <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {projects.map((p, i) => (
-            <article
+            <motion.article
               key={i}
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ delay: i * 0.07, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ y: -6 }}
               className={`group relative overflow-hidden aspect-[4/5] stone-base bg-gradient-to-br ${p.tone}`}
             >
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
@@ -33,13 +45,15 @@ export default function Projects() {
                 <h3 className="mt-1.5 font-serif text-lg leading-snug">{p.title}</h3>
                 <p className="mt-1 text-xs text-white/70">{p.city}</p>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
 
-        <div className="mt-14 text-center">
-          <a href="#contato" className="btn-outline">Quero um projeto assim</a>
-        </div>
+        <Reveal delay={2}>
+          <div className="mt-14 text-center">
+            <a href="#contato" className="btn-outline">Quero um projeto assim</a>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
