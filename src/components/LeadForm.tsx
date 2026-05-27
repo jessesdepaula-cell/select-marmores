@@ -62,7 +62,9 @@ export default function LeadForm() {
           <span className="eyebrow !text-white/70">Solicitar orçamento</span>
           <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight">
             Conte sobre o seu projeto.
-            <span className="block italic font-light">Respondemos no mesmo dia.</span>
+            <span className="block italic font-light" style={{ color: '#e8a4a4' }}>
+              Respondemos no mesmo dia.
+            </span>
           </h2>
           <p className="mt-6 text-white/75 leading-relaxed max-w-md">
             Preencha o formulário ou fale direto pelo WhatsApp. Em até 24 horas
@@ -123,8 +125,8 @@ export default function LeadForm() {
                     onClick={() => toggle(t)}
                     className={`px-4 py-2 border text-sm transition-colors ${
                       on
-                        ? 'bg-[var(--ink)] text-white border-[var(--ink)]'
-                        : 'bg-white text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--ink)]'
+                        ? 'bg-[var(--red)] text-white border-[var(--red)]'
+                        : 'bg-white text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--red)] hover:text-[var(--red)]'
                     }`}
                   >
                     {t}

@@ -17,7 +17,7 @@ export default function Projects() {
           <span className="eyebrow">Projetos</span>
           <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight max-w-3xl mx-auto">
             Obras que transformam
-            <span className="italic"> ambientes.</span>
+            <span className="italic accent"> ambientes.</span>
           </h2>
         </div>
 

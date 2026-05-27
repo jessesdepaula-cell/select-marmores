@@ -42,13 +42,13 @@ export default function Testimonials() {
         <span className="eyebrow">Depoimentos</span>
         <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight">
           Quem confiou
-          <span className="italic"> conta.</span>
+          <span className="italic accent"> conta.</span>
         </h2>
 
         <div className="mt-14 relative">
-          <div className="flex justify-center mb-6 text-[#caa15c]">
+          <div className="flex justify-center mb-6">
             {Array.from({ length: 5 }).map((_, k) => (
-              <Star key={k} size={18} fill="#caa15c" strokeWidth={0} />
+              <Star key={k} size={18} fill="var(--red)" stroke="var(--red)" />
             ))}
           </div>
           <blockquote className="font-serif text-xl sm:text-2xl leading-relaxed text-[var(--ink)] max-w-3xl mx-auto">
@@ -63,7 +63,7 @@ export default function Testimonials() {
             <button
               onClick={prev}
               aria-label="Anterior"
-              className="w-10 h-10 border border-[var(--line)] hover:bg-[var(--ink)] hover:text-white hover:border-[var(--ink)] transition-colors flex items-center justify-center"
+              className="w-10 h-10 border border-[var(--line)] hover:bg-[var(--red)] hover:text-white hover:border-[var(--red)] transition-colors flex items-center justify-center"
             >
               <ChevronLeft size={18} />
             </button>
@@ -74,7 +74,7 @@ export default function Testimonials() {
                   onClick={() => setI(k)}
                   aria-label={`Depoimento ${k + 1}`}
                   className={`w-2 h-2 rounded-full transition-colors ${
-                    k === i ? 'bg-[var(--ink)]' : 'bg-[var(--line)]'
+                    k === i ? 'bg-[var(--red)]' : 'bg-[var(--line)]'
                   }`}
                 />
               ))}
@@ -82,7 +82,7 @@ export default function Testimonials() {
             <button
               onClick={next}
               aria-label="Próximo"
-              className="w-10 h-10 border border-[var(--line)] hover:bg-[var(--ink)] hover:text-white hover:border-[var(--ink)] transition-colors flex items-center justify-center"
+              className="w-10 h-10 border border-[var(--line)] hover:bg-[var(--red)] hover:text-white hover:border-[var(--red)] transition-colors flex items-center justify-center"
             >
               <ChevronRight size={18} />
             </button>

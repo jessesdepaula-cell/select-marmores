@@ -97,7 +97,7 @@ export default function Materials() {
           <span className="eyebrow">Materiais</span>
           <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight max-w-3xl mx-auto">
             Mais de 60 pedras nobres
-            <span className="italic"> para a sua obra.</span>
+            <span className="italic accent"> para a sua obra.</span>
           </h2>
           <p className="mt-6 text-[var(--ink-soft)] max-w-xl mx-auto">
             Clássicos italianos, exóticos brasileiros e ultracompactos de última
@@ -112,8 +112,8 @@ export default function Materials() {
               onClick={() => setActive(c.id)}
               className={`text-xs uppercase tracking-[0.2em] px-5 py-2.5 border transition-colors ${
                 active === c.id
-                  ? 'bg-[var(--ink)] text-white border-[var(--ink)]'
-                  : 'bg-white text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--ink)]'
+                  ? 'bg-[var(--red)] text-white border-[var(--red)]'
+                  : 'bg-white text-[var(--ink-soft)] border-[var(--line)] hover:border-[var(--red)] hover:text-[var(--red)]'
               }`}
             >
               {c.label}

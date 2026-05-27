@@ -5,7 +5,7 @@ export default function About() {
         <span className="eyebrow">Quem somos</span>
         <h2 className="mt-5 font-serif text-3xl sm:text-5xl leading-tight max-w-3xl mx-auto">
           A virada de chave entre o
-          <span className="italic"> projeto e a obra-prima.</span>
+          <span className="italic accent"> projeto e a obra-prima.</span>
         </h2>
         <p className="mt-8 text-[var(--ink-soft)] leading-relaxed text-lg max-w-3xl mx-auto">
           Somos uma marmoraria que se comporta como um ateliê. Cada chapa é
@@ -31,7 +31,7 @@ export default function About() {
 function Stat({ n, label }: { n: string; label: string }) {
   return (
     <div className="bg-white py-8 px-4">
-      <div className="font-serif text-3xl sm:text-4xl">{n}</div>
+      <div className="font-serif text-3xl sm:text-4xl accent">{n}</div>
       <div className="mt-2 text-xs uppercase tracking-[0.2em] text-[var(--muted)]">{label}</div>
     </div>
   );
