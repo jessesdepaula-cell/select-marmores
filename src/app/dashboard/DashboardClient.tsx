@@ -37,7 +37,17 @@ function onlyDigits(s: string) {
   return s.replace(/\D+/g, '');
 }
 
-export default function DashboardClient({ initialLeads }: { initialLeads: Lead[] }) {
+type DashboardClientProps = {
+  initialLeads: Lead[];
+  logoutEndpoint?: string;
+  redirectAfterLogout?: string;
+};
+
+export default function DashboardClient({
+  initialLeads,
+  logoutEndpoint = '/api/auth/logout',
+  redirectAfterLogout = '/login',
+}: DashboardClientProps) {
   const router = useRouter();
   const [leads, setLeads] = useState<Lead[]>(initialLeads);
   const [q, setQ] = useState('');
@@ -68,8 +78,8 @@ export default function DashboardClient({ initialLeads }: { initialLeads: Lead[]
   }, [leads, q, statusFilter]);
 
   async function logout() {
-    await fetch('/api/auth/logout', { method: 'POST' });
-    router.replace('/login');
+    await fetch(logoutEndpoint, { method: 'POST' });
+    router.replace(redirectAfterLogout);
     router.refresh();
   }
 
