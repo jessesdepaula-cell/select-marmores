@@ -22,11 +22,15 @@ import type { Lead, LeadStatus } from '@/lib/supabase';
 const STATUS_LABELS: Record<LeadStatus, string> = {
   novo: 'Novo',
   em_contato: 'Em contato',
-  orcamento_enviado: 'Orçamento enviado',
-  convertido: 'Convertido',
+  orcamento_enviado: 'Proposta enviada',
+  convertido: 'Vendido',
   perdido: 'Perdido',
 };
 const STATUS_ORDER: LeadStatus[] = ['novo', 'em_contato', 'orcamento_enviado', 'convertido', 'perdido'];
+
+function fmtBRL(n: number) {
+  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
 
 const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '';
 
@@ -122,7 +126,7 @@ export default function DashboardClient({
     router.refresh();
   }
 
-  async function updateLead(id: string, patch: Partial<Lead>) {
+  async function updateLead(id: string, patch: Partial<Lead>): Promise<boolean> {
     setBusy(true);
     const prev = leads;
     setLeads((ls) => ls.map((l) => (l.id === id ? { ...l, ...patch } as Lead : l)));
@@ -134,12 +138,71 @@ export default function DashboardClient({
         body: JSON.stringify(patch),
       });
       if (!res.ok) throw new Error('fail');
+      return true;
     } catch {
       setLeads(prev);
-      alert('Não foi possível atualizar.');
+      return false;
     } finally {
       setBusy(false);
     }
+  }
+
+  // Modal "venda" — disparado ao mudar status para 'convertido'
+  const [vendidoFor, setVendidoFor] = useState<Lead | null>(null);
+  const [vendidoProduto, setVendidoProduto] = useState('');
+  const [vendidoValor, setVendidoValor] = useState('');
+  const [vendidoBusy, setVendidoBusy] = useState(false);
+  const [vendidoError, setVendidoError] = useState<string | null>(null);
+
+  function closeVendido() {
+    setVendidoFor(null);
+    setVendidoProduto('');
+    setVendidoValor('');
+    setVendidoBusy(false);
+    setVendidoError(null);
+  }
+
+  function requestStatusChange(lead: Lead, newStatus: LeadStatus) {
+    if (newStatus === lead.status) return;
+    if (newStatus === 'convertido') {
+      setVendidoFor(lead);
+      setVendidoProduto(lead.produto_vendido ?? '');
+      setVendidoValor(
+        lead.valor_venda != null
+          ? lead.valor_venda.toLocaleString('pt-BR', { minimumFractionDigits: 2 })
+          : '',
+      );
+      setVendidoError(null);
+      return;
+    }
+    void updateLead(lead.id, { status: newStatus }).then((ok) => {
+      if (!ok) alert('Não foi possível atualizar.');
+    });
+  }
+
+  async function submitVendido(e: React.FormEvent) {
+    e.preventDefault();
+    if (!vendidoFor) return;
+    setVendidoError(null);
+    const produto = vendidoProduto.trim();
+    if (!produto) {
+      setVendidoError('Informe o produto vendido.');
+      return;
+    }
+    const valorNum = Number(vendidoValor.replace(/\./g, '').replace(',', '.'));
+    if (!Number.isFinite(valorNum) || valorNum < 0) {
+      setVendidoError('Valor inválido. Use só números (ex: 12500 ou 12.500,00).');
+      return;
+    }
+    setVendidoBusy(true);
+    const ok = await updateLead(vendidoFor.id, {
+      status: 'convertido',
+      produto_vendido: produto,
+      valor_venda: valorNum,
+    });
+    setVendidoBusy(false);
+    if (ok) closeVendido();
+    else setVendidoError('Falha ao salvar. Tente novamente.');
   }
 
   async function deleteLead(id: string) {
@@ -211,7 +274,7 @@ export default function DashboardClient({
         <section className="mt-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <StatCard label="Total" value={stats.t} />
           <StatCard label="Novos (não contactados)" value={stats.novo} accent />
-          <StatCard label="Convertidos" value={stats.conv} />
+          <StatCard label="Vendidos" value={stats.conv} />
           <StatCard label="Últimos 7 dias" value={stats.last7} icon={<TrendingUp size={14} />} />
         </section>
 
@@ -254,12 +317,12 @@ export default function DashboardClient({
               <table className="w-full text-sm">
                 <thead className="bg-[var(--bg-soft)] text-left text-xs uppercase tracking-wider text-[var(--muted)]">
                   <tr>
+                    <th className="py-3 px-4">Status</th>
                     <th className="py-3 px-4">Quando</th>
                     <th className="py-3 px-4">Nome</th>
                     <th className="py-3 px-4">Telefone</th>
                     <th className="py-3 px-4">Cidade</th>
                     <th className="py-3 px-4">Obra</th>
-                    <th className="py-3 px-4">Status</th>
                     <th className="py-3 px-4"></th>
                   </tr>
                 </thead>
@@ -270,14 +333,24 @@ export default function DashboardClient({
                       onClick={() => setSelected(l)}
                       className="border-t border-[var(--line)] hover:bg-[var(--bg-soft)]/60 cursor-pointer"
                     >
+                      <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
+                        <select
+                          value={l.status}
+                          onChange={(e) => requestStatusChange(l, e.target.value as LeadStatus)}
+                          disabled={busy}
+                          className={`badge badge-${l.status} cursor-pointer border-transparent outline-none focus:ring-2 focus:ring-[var(--gold)]`}
+                          aria-label="Alterar status"
+                        >
+                          {STATUS_ORDER.map((s) => (
+                            <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                          ))}
+                        </select>
+                      </td>
                       <td className="py-3 px-4 text-[var(--muted)] whitespace-nowrap">{fmtDate(l.created_at)}</td>
                       <td className="py-3 px-4 font-medium">{l.nome}</td>
                       <td className="py-3 px-4">{l.telefone}</td>
                       <td className="py-3 px-4">{l.cidade ?? '—'}</td>
                       <td className="py-3 px-4">{l.tipo_obra ?? '—'}</td>
-                      <td className="py-3 px-4">
-                        <span className={`badge badge-${l.status}`}>{STATUS_LABELS[l.status]}</span>
-                      </td>
                       <td className="py-3 px-4 text-right">
                         <a
                           href={`https://wa.me/${WHATSAPP || onlyDigits(l.telefone)}?text=${encodeURIComponent(`Olá ${l.nome.split(' ')[0]}, aqui é da Select Mármores!`)}`}
@@ -304,6 +377,7 @@ export default function DashboardClient({
           onClose={() => setSelected(null)}
           onUpdate={updateLead}
           onDelete={deleteLead}
+          onStatusChange={(newStatus) => requestStatusChange(selected, newStatus)}
           busy={busy}
         />
       )}
@@ -404,6 +478,89 @@ export default function DashboardClient({
           </form>
         </div>
       )}
+
+      {vendidoFor && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"
+          onClick={closeVendido}
+        >
+          <form
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={submitVendido}
+            className="w-full max-w-md bg-[var(--bg)] border border-[var(--line)] p-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.4)]"
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-serif text-xl">Registrar venda</h2>
+                <p className="mt-1 text-xs text-[var(--muted)]">
+                  Lead: <strong className="text-[var(--ink)]">{vendidoFor.nome}</strong>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={closeVendido}
+                className="text-[var(--muted)] hover:text-[var(--ink)]"
+                aria-label="Cancelar"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <label className="block mt-5 text-xs uppercase tracking-wider text-[var(--muted)]">
+              Produto vendido
+            </label>
+            <input
+              type="text"
+              value={vendidoProduto}
+              onChange={(e) => setVendidoProduto(e.target.value)}
+              required
+              autoFocus
+              className="field"
+              placeholder="Ex: Bancada de cozinha em quartzito Calacatta"
+            />
+
+            <label className="block mt-4 text-xs uppercase tracking-wider text-[var(--muted)]">
+              Valor (R$)
+            </label>
+            <input
+              type="text"
+              inputMode="decimal"
+              value={vendidoValor}
+              onChange={(e) => setVendidoValor(e.target.value)}
+              required
+              className="field"
+              placeholder="12.500,00"
+            />
+            <p className="mt-1 text-xs text-[var(--muted)]">
+              Use vírgula para os centavos. O ponto é opcional para milhares.
+            </p>
+
+            {vendidoError && (
+              <p className="mt-3 text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2">
+                {vendidoError}
+              </p>
+            )}
+
+            <div className="mt-6 flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={closeVendido}
+                className="btn-ghost !py-2 !px-4 text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={vendidoBusy}
+                className="btn-gold !py-2 !px-4 text-sm disabled:opacity-70"
+              >
+                {vendidoBusy && <Loader2 size={14} className="animate-spin" />}
+                {vendidoBusy ? 'Salvando...' : 'Confirmar venda'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
@@ -424,12 +581,14 @@ function LeadDrawer({
   onClose,
   onUpdate,
   onDelete,
+  onStatusChange,
   busy,
 }: {
   lead: Lead;
   onClose: () => void;
-  onUpdate: (id: string, patch: Partial<Lead>) => Promise<void>;
+  onUpdate: (id: string, patch: Partial<Lead>) => Promise<boolean>;
   onDelete: (id: string) => Promise<void>;
+  onStatusChange: (newStatus: LeadStatus) => void;
   busy: boolean;
 }) {
   const [notas, setNotas] = useState(lead.notas ?? '');
@@ -502,7 +661,7 @@ function LeadDrawer({
                 <button
                   key={s}
                   disabled={busy || lead.status === s}
-                  onClick={() => onUpdate(lead.id, { status: s })}
+                  onClick={() => onStatusChange(s)}
                   className={`text-xs px-3 py-1.5 border rounded-full ${
                     lead.status === s
                       ? `badge-${s} border-transparent font-semibold`
@@ -513,6 +672,22 @@ function LeadDrawer({
                 </button>
               ))}
             </div>
+            {lead.status === 'convertido' && (lead.produto_vendido || lead.valor_venda != null) && (
+              <div className="mt-3 bg-emerald-50 border border-emerald-200 p-3 text-sm">
+                {lead.produto_vendido && (
+                  <div className="text-emerald-900">
+                    <span className="text-[10px] uppercase tracking-wider text-emerald-700">Produto vendido</span>
+                    <div>{lead.produto_vendido}</div>
+                  </div>
+                )}
+                {lead.valor_venda != null && (
+                  <div className="mt-2 text-emerald-900">
+                    <span className="text-[10px] uppercase tracking-wider text-emerald-700">Valor</span>
+                    <div className="font-semibold">{fmtBRL(lead.valor_venda)}</div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div>

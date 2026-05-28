@@ -3,17 +3,22 @@ import { cookies } from 'next/headers';
 import { z } from 'zod';
 import { getServiceSupabase } from '@/lib/supabase';
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/auth';
+import { MEMBER_COOKIE, verifyMemberToken } from '@/lib/member-auth';
 
 const updateSchema = z.object({
   status: z
     .enum(['novo', 'em_contato', 'orcamento_enviado', 'convertido', 'perdido'])
     .optional(),
   notas: z.string().max(2000).nullable().optional(),
+  produto_vendido: z.string().max(500).nullable().optional(),
+  valor_venda: z.number().nonnegative().nullable().optional(),
 });
 
 async function requireAuth() {
   const store = await cookies();
-  return verifySessionToken(store.get(SESSION_COOKIE)?.value);
+  if (verifySessionToken(store.get(SESSION_COOKIE)?.value)) return true;
+  if (verifyMemberToken(store.get(MEMBER_COOKIE)?.value)) return true;
+  return false;
 }
 
 export async function PATCH(
@@ -43,6 +48,15 @@ export async function PATCH(
   const patch: Record<string, unknown> = {};
   if (parsed.data.status !== undefined) patch.status = parsed.data.status;
   if (parsed.data.notas !== undefined) patch.notas = parsed.data.notas;
+  if (parsed.data.produto_vendido !== undefined) patch.produto_vendido = parsed.data.produto_vendido;
+  if (parsed.data.valor_venda !== undefined) patch.valor_venda = parsed.data.valor_venda;
+
+  // Se sair de 'convertido' para outro status, limpa os campos de venda
+  if (parsed.data.status !== undefined && parsed.data.status !== 'convertido') {
+    if (patch.produto_vendido === undefined) patch.produto_vendido = null;
+    if (patch.valor_venda === undefined) patch.valor_venda = null;
+  }
+
   if (Object.keys(patch).length === 0) {
     return NextResponse.json({ ok: false, error: 'Nada para atualizar' }, { status: 400 });
   }

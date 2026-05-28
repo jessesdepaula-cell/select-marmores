@@ -16,8 +16,14 @@ create table if not exists public.leads (
   mensagem     text,
   origem       text default 'site',
   status       text not null default 'novo' check (status in ('novo','em_contato','orcamento_enviado','convertido','perdido')),
-  notas        text
+  notas        text,
+  produto_vendido text,
+  valor_venda     numeric(12,2)
 );
+
+-- Migração: adiciona as colunas se já existir uma tabela antiga
+alter table public.leads add column if not exists produto_vendido text;
+alter table public.leads add column if not exists valor_venda     numeric(12,2);
 
 create index if not exists leads_created_at_idx on public.leads (created_at desc);
 create index if not exists leads_status_idx     on public.leads (status);

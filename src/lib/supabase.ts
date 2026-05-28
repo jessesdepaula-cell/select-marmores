@@ -21,6 +21,8 @@ export type Lead = {
   origem: string | null;
   status: LeadStatus;
   notas: string | null;
+  produto_vendido: string | null;
+  valor_venda: number | null;
 };
 
 export function getServiceSupabase() {
