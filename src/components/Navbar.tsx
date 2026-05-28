@@ -54,9 +54,7 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           <a
             href="/entrar"
-            className={`text-sm transition-colors ${
-              scrolled ? 'text-[var(--ink-soft)] hover:text-[var(--ink)]' : 'text-white/80 hover:text-white'
-            }`}
+            className="text-sm text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"
           >
             Entrar
           </a>
