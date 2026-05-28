@@ -32,6 +32,7 @@ export default async function MembrosPage() {
       initialLeads={(data ?? []) as Lead[]}
       logoutEndpoint="/api/membros/sair"
       redirectAfterLogout="/"
+      showAddUser
     />
   );
 }

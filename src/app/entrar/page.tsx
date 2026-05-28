@@ -94,13 +94,7 @@ function EntrarInner() {
           {busy ? 'Entrando...' : 'Entrar'}
         </button>
 
-        <p className="mt-5 text-center text-sm text-[var(--muted)]">
-          Ainda não tem conta?{' '}
-          <Link href="/cadastro" className="text-[var(--ink)] underline">
-            Cadastre-se
-          </Link>
-        </p>
-        <Link href="/" className="block mt-2 text-center text-xs text-[var(--muted)] hover:text-[var(--ink)]">
+        <Link href="/" className="block mt-5 text-center text-xs text-[var(--muted)] hover:text-[var(--ink)]">
           ← Voltar para o site
         </Link>
       </form>

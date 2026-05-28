@@ -14,6 +14,8 @@ import {
   Calendar,
   X,
   TrendingUp,
+  UserPlus,
+  Loader2,
 } from 'lucide-react';
 import type { Lead, LeadStatus } from '@/lib/supabase';
 
@@ -41,12 +43,14 @@ type DashboardClientProps = {
   initialLeads: Lead[];
   logoutEndpoint?: string;
   redirectAfterLogout?: string;
+  showAddUser?: boolean;
 };
 
 export default function DashboardClient({
   initialLeads,
   logoutEndpoint = '/api/auth/logout',
   redirectAfterLogout = '/login',
+  showAddUser = false,
 }: DashboardClientProps) {
   const router = useRouter();
   const [leads, setLeads] = useState<Lead[]>(initialLeads);
@@ -54,6 +58,41 @@ export default function DashboardClient({
   const [statusFilter, setStatusFilter] = useState<'todos' | LeadStatus>('todos');
   const [selected, setSelected] = useState<Lead | null>(null);
   const [busy, setBusy] = useState(false);
+
+  // Modal "novo usuário"
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [uNome, setUNome] = useState('');
+  const [uEmail, setUEmail] = useState('');
+  const [uPassword, setUPassword] = useState('');
+  const [uBusy, setUBusy] = useState(false);
+  const [uError, setUError] = useState<string | null>(null);
+  const [uOk, setUOk] = useState<string | null>(null);
+
+  function closeUserModal() {
+    setShowUserModal(false);
+    setUNome(''); setUEmail(''); setUPassword('');
+    setUBusy(false); setUError(null); setUOk(null);
+  }
+
+  async function submitNewUser(e: React.FormEvent) {
+    e.preventDefault();
+    setUBusy(true); setUError(null); setUOk(null);
+    try {
+      const res = await fetch('/api/membros/criar-usuario', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ nome: uNome, email: uEmail, password: uPassword }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) throw new Error(json.error ?? 'Falha ao criar usuário');
+      setUOk(`Usuário ${json.user?.email ?? uEmail} criado com sucesso.`);
+      setUNome(''); setUEmail(''); setUPassword('');
+    } catch (err) {
+      setUError(err instanceof Error ? err.message : 'Falha ao criar usuário');
+    } finally {
+      setUBusy(false);
+    }
+  }
 
   const stats = useMemo(() => {
     const t = leads.length;
@@ -141,6 +180,14 @@ export default function DashboardClient({
           </div>
           <div className="flex items-center gap-2">
             <a href="/" className="text-xs text-[#d8ccae] hover:text-white px-3">Ver site</a>
+            {showAddUser && (
+              <button
+                onClick={() => setShowUserModal(true)}
+                className="inline-flex items-center gap-1.5 text-xs bg-[#3a322a] hover:bg-[#4a4036] px-3 py-1.5 rounded"
+              >
+                <UserPlus size={14} /> Novo usuário
+              </button>
+            )}
             <button onClick={logout} className="inline-flex items-center gap-1.5 text-xs bg-[#3a322a] hover:bg-[#4a4036] px-3 py-1.5 rounded">
               <LogOut size={14} /> Sair
             </button>
@@ -259,6 +306,103 @@ export default function DashboardClient({
           onDelete={deleteLead}
           busy={busy}
         />
+      )}
+
+      {showAddUser && showUserModal && (
+        <div
+          className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"
+          onClick={closeUserModal}
+        >
+          <form
+            onClick={(e) => e.stopPropagation()}
+            onSubmit={submitNewUser}
+            className="w-full max-w-md bg-[var(--bg)] border border-[var(--line)] p-6 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.4)]"
+          >
+            <div className="flex items-center justify-between">
+              <h2 className="font-serif text-xl">Novo usuário</h2>
+              <button
+                type="button"
+                onClick={closeUserModal}
+                className="text-[var(--muted)] hover:text-[var(--ink)]"
+                aria-label="Fechar"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <p className="mt-1 text-sm text-[var(--muted)]">
+              Crie acesso para outro membro da equipe.
+            </p>
+
+            <label className="block mt-5 text-xs uppercase tracking-wider text-[var(--muted)]">
+              Nome
+            </label>
+            <input
+              type="text"
+              value={uNome}
+              onChange={(e) => setUNome(e.target.value)}
+              required
+              autoFocus
+              className="field"
+              placeholder="Nome completo"
+            />
+
+            <label className="block mt-4 text-xs uppercase tracking-wider text-[var(--muted)]">
+              E-mail
+            </label>
+            <input
+              type="email"
+              value={uEmail}
+              onChange={(e) => setUEmail(e.target.value)}
+              required
+              autoComplete="off"
+              className="field"
+              placeholder="usuario@exemplo.com"
+            />
+
+            <label className="block mt-4 text-xs uppercase tracking-wider text-[var(--muted)]">
+              Senha temporária
+            </label>
+            <input
+              type="text"
+              value={uPassword}
+              onChange={(e) => setUPassword(e.target.value)}
+              required
+              minLength={8}
+              autoComplete="off"
+              className="field"
+              placeholder="Mínimo 8 caracteres"
+            />
+
+            {uError && (
+              <p className="mt-3 text-sm text-red-700 bg-red-50 border border-red-200 px-3 py-2">
+                {uError}
+              </p>
+            )}
+            {uOk && (
+              <p className="mt-3 text-sm text-emerald-800 bg-emerald-50 border border-emerald-200 px-3 py-2">
+                {uOk}
+              </p>
+            )}
+
+            <div className="mt-6 flex gap-2 justify-end">
+              <button
+                type="button"
+                onClick={closeUserModal}
+                className="btn-ghost !py-2 !px-4 text-sm"
+              >
+                Fechar
+              </button>
+              <button
+                type="submit"
+                disabled={uBusy}
+                className="btn-gold !py-2 !px-4 text-sm disabled:opacity-70"
+              >
+                {uBusy && <Loader2 size={14} className="animate-spin" />}
+                {uBusy ? 'Criando...' : 'Criar usuário'}
+              </button>
+            </div>
+          </form>
+        </div>
       )}
     </div>
   );
