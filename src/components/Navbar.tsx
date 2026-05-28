@@ -51,9 +51,19 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <a href="#contato" className="hidden md:inline-flex btn !py-2.5 !px-5 text-xs">
-          Faça um orçamento
-        </a>
+        <div className="hidden md:flex items-center gap-3">
+          <a
+            href="/entrar"
+            className={`text-sm transition-colors ${
+              scrolled ? 'text-[var(--ink-soft)] hover:text-[var(--ink)]' : 'text-white/80 hover:text-white'
+            }`}
+          >
+            Entrar
+          </a>
+          <a href="#contato" className="inline-flex btn !py-2.5 !px-5 text-xs">
+            Faça um orçamento
+          </a>
+        </div>
 
         <button
           aria-label="Menu"
@@ -77,6 +87,13 @@ export default function Navbar() {
                 {l.label}
               </a>
             ))}
+            <a
+              href="/entrar"
+              onClick={() => setOpen(false)}
+              className="py-1 text-[var(--ink-soft)]"
+            >
+              Entrar
+            </a>
             <a href="#contato" onClick={() => setOpen(false)} className="btn mt-2">
               Faça um orçamento
             </a>
