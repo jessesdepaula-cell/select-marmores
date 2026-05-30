@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { QuickContactButton } from './QuickContact';
 
-const WHATSAPP_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? '(62) 9465-0630';
+const WHATSAPP_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? '(62) 8532-3506';
 
 const TYPES = [
   'Pias', 'Ilhas', 'Bancadas', 'Lavatórios',

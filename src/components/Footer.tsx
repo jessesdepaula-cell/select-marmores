@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { AtSign, MapPin, Phone, Mail } from 'lucide-react';
 import { QuickContactButton } from './QuickContact';
 
-const WHATSAPP_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? '(62) 9465-0630';
+const WHATSAPP_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? '(62) 8532-3506';
 
 export default function Footer() {
   return (

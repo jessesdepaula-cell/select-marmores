@@ -3,8 +3,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Loader2, X, MessageCircle, CheckCircle2 } from 'lucide-react';
 
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '556294650630';
-const WHATSAPP_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? '(62) 9465-0630';
+const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '556285323506';
+const WHATSAPP_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? '(62) 8532-3506';
 
 export type QuickContactOrigin =
   | 'cta_navbar'
