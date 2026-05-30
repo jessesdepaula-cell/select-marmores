@@ -28,6 +28,23 @@ const STATUS_LABELS: Record<LeadStatus, string> = {
 };
 const STATUS_ORDER: LeadStatus[] = ['novo', 'em_contato', 'orcamento_enviado', 'convertido', 'perdido'];
 
+const ORIGEM_LABELS: Record<string, string> = {
+  site: 'Site · formulário',
+  site_orcamento: 'Form. orçamento',
+  cta_navbar: 'Botão topo',
+  cta_hero: 'Botão hero',
+  cta_projetos: 'Botão projetos',
+  cta_whatsapp_float: 'WhatsApp flutuante',
+  cta_form_whatsapp: 'WhatsApp (form)',
+  cta_footer: 'Rodapé',
+  cta_generic: 'Botão de contato',
+};
+
+function origemLabel(o: string | null | undefined): string {
+  if (!o) return '—';
+  return ORIGEM_LABELS[o] ?? o;
+}
+
 function fmtBRL(n: number) {
   return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
@@ -322,6 +339,7 @@ export default function DashboardClient({
                     <th className="py-3 px-4">Nome</th>
                     <th className="py-3 px-4">Telefone</th>
                     <th className="py-3 px-4">Cidade</th>
+                    <th className="py-3 px-4">Origem</th>
                     <th className="py-3 px-4">Obra</th>
                     <th className="py-3 px-4"></th>
                   </tr>
@@ -350,6 +368,11 @@ export default function DashboardClient({
                       <td className="py-3 px-4 font-medium">{l.nome}</td>
                       <td className="py-3 px-4">{l.telefone}</td>
                       <td className="py-3 px-4">{l.cidade ?? '—'}</td>
+                      <td className="py-3 px-4">
+                        <span className="inline-block text-[11px] px-2 py-0.5 rounded-full bg-[var(--bg-soft)] border border-[var(--line)] text-[var(--ink-soft)] whitespace-nowrap">
+                          {origemLabel(l.origem)}
+                        </span>
+                      </td>
                       <td className="py-3 px-4">{l.tipo_obra ?? '—'}</td>
                       <td className="py-3 px-4 text-right">
                         <a
@@ -627,7 +650,7 @@ function LeadDrawer({
               </Row>
             )}
             {lead.cidade && <Row icon={<MapPin size={14} />} label="Cidade">{lead.cidade}</Row>}
-            <Row icon={<Calendar size={14} />} label="Origem">{lead.origem ?? '—'}</Row>
+            <Row icon={<Calendar size={14} />} label="Origem">{origemLabel(lead.origem)}</Row>
           </div>
 
           {(lead.tipo_obra || lead.materiais) && (

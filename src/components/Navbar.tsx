@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { Menu, X } from 'lucide-react';
+import { QuickContactButton } from './QuickContact';
 
 const links = [
   { href: '#sobre',     label: 'Quem somos' },
@@ -58,9 +59,16 @@ export default function Navbar() {
           >
             Entrar
           </a>
-          <a href="#contato" className="inline-flex btn !py-2.5 !px-5 text-xs">
+          <QuickContactButton
+            origem="cta_navbar"
+            className="inline-flex btn !py-2.5 !px-5 text-xs"
+            title="Pedido de orçamento"
+            subtitle="Deixe nome e telefone — abrimos o WhatsApp pra agilizar."
+            cta="Quero meu orçamento"
+            waMessage="Olá! Vim pelo site da Select Mármores e quero um orçamento."
+          >
             Faça um orçamento
-          </a>
+          </QuickContactButton>
         </div>
 
         <button
@@ -92,9 +100,17 @@ export default function Navbar() {
             >
               Entrar
             </a>
-            <a href="#contato" onClick={() => setOpen(false)} className="btn mt-2">
+            <QuickContactButton
+              origem="cta_navbar"
+              onClick={() => setOpen(false)}
+              className="btn mt-2"
+              title="Pedido de orçamento"
+              subtitle="Deixe nome e telefone — abrimos o WhatsApp pra agilizar."
+              cta="Quero meu orçamento"
+              waMessage="Olá! Vim pelo site da Select Mármores e quero um orçamento."
+            >
               Faça um orçamento
-            </a>
+            </QuickContactButton>
           </div>
         </div>
       )}

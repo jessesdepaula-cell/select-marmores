@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
+import { QuickContactButton } from './QuickContact';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -130,9 +131,16 @@ export default function Hero() {
             transition={{ duration: 0.7, ease, delay: 0.75 }}
             className="mt-9 flex flex-wrap gap-3"
           >
-            <a href="#contato" className="btn">
+            <QuickContactButton
+              origem="cta_hero"
+              className="btn"
+              title="Pedido de orçamento"
+              subtitle="Deixe nome e telefone — abrimos o WhatsApp pra agilizar."
+              cta="Quero meu orçamento"
+              waMessage="Olá! Vim pelo site da Select Mármores e quero um orçamento."
+            >
               Faça um orçamento <ArrowRight size={16} />
-            </a>
+            </QuickContactButton>
             <a href="#materiais" className="btn-outline">Ver materiais</a>
           </motion.div>
 

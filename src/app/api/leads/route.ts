@@ -12,6 +12,7 @@ const leadSchema = z.object({
   tipo_obra: z.string().max(80).optional().or(z.literal('')),
   materiais: z.string().max(200).optional().or(z.literal('')),
   mensagem: z.string().max(2000).optional().or(z.literal('')),
+  origem: z.string().max(60).optional().or(z.literal('')),
 });
 
 function blank(v: string | undefined) {
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
       tipo_obra: blank(d.tipo_obra),
       materiais: blank(d.materiais),
       mensagem: blank(d.mensagem),
-      origem: 'site',
+      origem: blank(d.origem) ?? 'site',
       status: 'novo',
     })
     .select('id')

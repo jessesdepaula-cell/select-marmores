@@ -1,8 +1,10 @@
+'use client';
+
 import Image from 'next/image';
 import { AtSign, MapPin, Phone, Mail } from 'lucide-react';
+import { QuickContactButton } from './QuickContact';
 
 const WHATSAPP_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? '(62) 9465-0630';
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '5562946506300';
 
 export default function Footer() {
   return (
@@ -38,7 +40,16 @@ export default function Footer() {
           <ul className="mt-4 space-y-3 text-sm">
             <li className="flex items-start gap-2">
               <Phone size={15} className="mt-0.5 text-white/60" />
-              <a href={`https://wa.me/${WHATSAPP}`} className="hover:text-white">{WHATSAPP_DISPLAY}</a>
+              <QuickContactButton
+                origem="cta_footer"
+                className="hover:text-white text-left"
+                title="Falar com a Select"
+                subtitle="Deixe nome e telefone — abrimos o WhatsApp em seguida."
+                cta="Abrir WhatsApp"
+                waMessage="Olá! Vim pelo site da Select Mármores."
+              >
+                {WHATSAPP_DISPLAY}
+              </QuickContactButton>
             </li>
             <li className="flex items-start gap-2">
               <Mail size={15} className="mt-0.5 text-white/60" />

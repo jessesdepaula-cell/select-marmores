@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Reveal } from './Reveal';
+import { QuickContactButton } from './QuickContact';
 
 const projects = [
   { tag: 'Cozinha gourmet',   title: 'Ilha monolítica em quartzito Mont Blanc',  city: 'Goiânia · GO',     tone: 'from-[#f1ece1] to-[#a89878]' },
@@ -51,7 +52,16 @@ export default function Projects() {
 
         <Reveal delay={2}>
           <div className="mt-14 text-center">
-            <a href="#contato" className="btn-outline">Quero um projeto assim</a>
+            <QuickContactButton
+              origem="cta_projetos"
+              className="btn-outline"
+              title="Quero um projeto assim"
+              subtitle="Conta seu nome e telefone — abrimos o WhatsApp com nosso time."
+              cta="Falar com um especialista"
+              waMessage="Olá! Vi os projetos no site da Select Mármores e quero fazer algo parecido."
+            >
+              Quero um projeto assim
+            </QuickContactButton>
           </div>
         </Reveal>
       </div>

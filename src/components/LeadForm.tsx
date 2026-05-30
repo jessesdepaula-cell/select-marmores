@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Loader2, CheckCircle2 } from 'lucide-react';
+import { QuickContactButton } from './QuickContact';
 
-const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '5562946506300';
 const WHATSAPP_DISPLAY = process.env.NEXT_PUBLIC_WHATSAPP_DISPLAY ?? '(62) 9465-0630';
 
 const TYPES = [
@@ -34,6 +34,7 @@ export default function LeadForm() {
       tipo_obra: selected.join(', '),
       materiais: fd.get('materiais'),
       mensagem:  fd.get('mensagem'),
+      origem:    'site_orcamento',
     };
 
     setState('sending');
@@ -73,15 +74,17 @@ export default function LeadForm() {
           </p>
 
           <div className="mt-10 space-y-3 text-sm">
-            <a
-              href={`https://wa.me/${WHATSAPP}?text=${encodeURIComponent('Olá! Vim pelo site da Select Mármores e quero um orçamento.')}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block text-white hover:text-white/80"
+            <QuickContactButton
+              origem="cta_form_whatsapp"
+              className="block text-left text-white hover:text-white/80"
+              title="Falar agora no WhatsApp"
+              subtitle="Deixe nome e telefone — abrimos a conversa em seguida."
+              cta="Abrir WhatsApp"
+              waMessage="Olá! Vim pelo site da Select Mármores e quero um orçamento."
             >
               <span className="text-white/60 text-xs uppercase tracking-wider block">WhatsApp</span>
               <span className="text-lg font-medium">{WHATSAPP_DISPLAY}</span>
-            </a>
+            </QuickContactButton>
             <div>
               <span className="text-white/60 text-xs uppercase tracking-wider block">Endereço</span>
               <span>Av. Uru, Qd. 91 — Aparecida de Goiânia, GO</span>
