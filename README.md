@@ -45,7 +45,7 @@ cp .env.local.example .env.local
 | `SUPABASE_SERVICE_ROLE_KEY` | Chave service role — usada pelo backend para inserir/listar leads |
 | `DASHBOARD_PASSWORD` | Senha de acesso ao `/dashboard` |
 | `SESSION_SECRET` | String aleatória de 32+ chars para assinar o cookie. Gere com `openssl rand -hex 32` |
-| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número do WhatsApp **só com dígitos**, com DDI (ex.: `5562946506300`) |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Número do WhatsApp **só com dígitos**, com DDI (ex.: `556294650630`) |
 | `NEXT_PUBLIC_WHATSAPP_DISPLAY` | Como o número aparece no site (ex.: `(62) 9465-0630`) |
 
 ### 4. Rodar
