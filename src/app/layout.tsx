@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter, Fraunces } from 'next/font/google';
+import Script from 'next/script';
 import './globals.css';
 import { QuickContactProvider } from '@/components/QuickContact';
+
+const GOOGLE_ADS_ID = 'AW-18174528312';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -31,6 +34,18 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <QuickContactProvider>{children}</QuickContactProvider>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads-gtag" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GOOGLE_ADS_ID}');
+          `}
+        </Script>
       </body>
     </html>
   );
