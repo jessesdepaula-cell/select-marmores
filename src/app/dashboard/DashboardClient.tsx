@@ -6,7 +6,6 @@ import {
   LogOut,
   Search,
   RefreshCw,
-  Trash2,
   MessageCircle,
   Mail,
   Phone,
@@ -222,22 +221,7 @@ export default function DashboardClient({
     else setVendidoError('Falha ao salvar. Tente novamente.');
   }
 
-  async function deleteLead(id: string) {
-    if (!confirm('Excluir este lead? Esta ação não pode ser desfeita.')) return;
-    setBusy(true);
-    const prev = leads;
-    setLeads((ls) => ls.filter((l) => l.id !== id));
-    if (selected?.id === id) setSelected(null);
-    try {
-      const res = await fetch(`/api/leads/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('fail');
-    } catch {
-      setLeads(prev);
-      alert('Não foi possível excluir.');
-    } finally {
-      setBusy(false);
-    }
-  }
+
 
   async function refresh() {
     setBusy(true);
@@ -399,7 +383,6 @@ export default function DashboardClient({
           lead={selected}
           onClose={() => setSelected(null)}
           onUpdate={updateLead}
-          onDelete={deleteLead}
           onStatusChange={(newStatus) => requestStatusChange(selected, newStatus)}
           busy={busy}
         />
@@ -603,14 +586,12 @@ function LeadDrawer({
   lead,
   onClose,
   onUpdate,
-  onDelete,
   onStatusChange,
   busy,
 }: {
   lead: Lead;
   onClose: () => void;
   onUpdate: (id: string, patch: Partial<Lead>) => Promise<boolean>;
-  onDelete: (id: string) => Promise<void>;
   onStatusChange: (newStatus: LeadStatus) => void;
   busy: boolean;
 }) {
@@ -731,15 +712,7 @@ function LeadDrawer({
             </button>
           </div>
 
-          <div className="pt-4 border-t border-[var(--line)]">
-            <button
-              onClick={() => onDelete(lead.id)}
-              disabled={busy}
-              className="inline-flex items-center gap-1.5 text-xs text-red-700 hover:text-red-900"
-            >
-              <Trash2 size={13} /> Excluir lead
-            </button>
-          </div>
+
         </div>
       </aside>
     </div>
