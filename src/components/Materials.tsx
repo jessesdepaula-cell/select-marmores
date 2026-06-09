@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Reveal } from './Reveal';
 
-type Stone = { name: string; tone: string };
+type Stone = { name: string; tone: string; image?: string };
 type Category = { id: string; label: string; items: Stone[] };
 
 const categories: Category[] = [
@@ -12,22 +12,22 @@ const categories: Category[] = [
     id: 'marmore',
     label: 'Mármore',
     items: [
-      { name: 'Carrara', tone: 'from-[#f6f3ec] to-[#cfc8b8]' },
-      { name: 'Calacatta', tone: 'from-[#f3ede2] to-[#a89878]' },
-      { name: 'Estatuário', tone: 'from-[#f4f1ea] to-[#c0b6a0]' },
-      { name: 'Crema Marfil', tone: 'from-[#f1e8d3] to-[#c2a878]' },
-      { name: 'Emperador', tone: 'from-[#6b4d33] to-[#3d2a1c]' },
-      { name: 'Travertino Romano', tone: 'from-[#ede1cb] to-[#b2956b]' },
-      { name: 'Pighês', tone: 'from-[#ecebe6] to-[#b8b3a4]' },
-      { name: 'Botticino', tone: 'from-[#f1ead7] to-[#b59e6e]' },
+      { name: 'Carrara', tone: 'from-[#f6f3ec] to-[#cfc8b8]', image: '/materials/carrara.png' },
+      { name: 'Calacatta', tone: 'from-[#f3ede2] to-[#a89878]', image: '/materials/calacatta.png' },
+      { name: 'Estatuário', tone: 'from-[#f4f1ea] to-[#c0b6a0]', image: '/materials/estatuario.png' },
+      { name: 'Crema Marfil', tone: 'from-[#f1e8d3] to-[#c2a878]', image: '/materials/crema_marfil.png' },
+      { name: 'Emperador', tone: 'from-[#6b4d33] to-[#3d2a1c]', image: '/materials/emperador.png' },
+      { name: 'Travertino Romano', tone: 'from-[#ede1cb] to-[#b2956b]', image: '/materials/travertino.png' },
+      { name: 'Pighês', tone: 'from-[#ecebe6] to-[#b8b3a4]', image: '/materials/pighes.png' },
+      { name: 'Botticino', tone: 'from-[#f1ead7] to-[#b59e6e]', image: '/materials/botticino.png' },
     ],
   },
   {
     id: 'granito',
     label: 'Granito',
     items: [
-      { name: 'Preto São Gabriel', tone: 'from-[#2c2823] to-[#0d0c0a]' },
-      { name: 'Branco Itaúnas',   tone: 'from-[#e8e6df] to-[#a8a59a]' },
+      { name: 'Preto São Gabriel', tone: 'from-[#2c2823] to-[#0d0c0a]', image: '/materials/preto_sao_gabriel.png' },
+      { name: 'Branco Itaúnas',   tone: 'from-[#e8e6df] to-[#a8a59a]', image: '/materials/branco_itaunas.png' },
       { name: 'Verde Ubatuba',    tone: 'from-[#1d2920] to-[#0a120c]' },
       { name: 'Vermelho Capão',   tone: 'from-[#5b1a18] to-[#2a0a09]' },
       { name: 'Amarelo Ornamental', tone: 'from-[#d2a463] to-[#7a5a1f]' },
@@ -40,9 +40,9 @@ const categories: Category[] = [
     id: 'quartzito',
     label: 'Quartzito',
     items: [
-      { name: 'Taj Mahal',       tone: 'from-[#f3eee0] to-[#bdae87]' },
-      { name: 'Mont Blanc',      tone: 'from-[#f4f3ee] to-[#b8b4a5]' },
-      { name: 'Patagonia',       tone: 'from-[#e2dfd6] to-[#7c736a]' },
+      { name: 'Taj Mahal',       tone: 'from-[#f3eee0] to-[#bdae87]', image: '/materials/taj_mahal.png' },
+      { name: 'Mont Blanc',      tone: 'from-[#f4f3ee] to-[#b8b4a5]', image: '/materials/mont_blanc.png' },
+      { name: 'Patagonia',       tone: 'from-[#e2dfd6] to-[#7c736a]', image: '/materials/patagonia.png' },
       { name: 'Azul Macaúbas',   tone: 'from-[#2c4d6a] to-[#13283c]' },
       { name: 'Iceberg',         tone: 'from-[#eaeef0] to-[#9ab0b8]' },
       { name: 'Mediterrâneo',    tone: 'from-[#dfe6e8] to-[#7d8d92]' },
@@ -54,7 +54,7 @@ const categories: Category[] = [
     id: 'onix',
     label: 'Ônix',
     items: [
-      { name: 'Ônix Mel',     tone: 'from-[#e8c982] to-[#6b3f0e]' },
+      { name: 'Ônix Mel',     tone: 'from-[#e8c982] to-[#6b3f0e]', image: '/materials/onix_mel.png' },
       { name: 'Ônix Verde',   tone: 'from-[#7c8f5a] to-[#2d3a18]' },
       { name: 'Ônix Branco',  tone: 'from-[#f3ecd9] to-[#b7a877]' },
       { name: 'Ônix Lemon',   tone: 'from-[#f3e69b] to-[#a78318]' },
@@ -66,7 +66,7 @@ const categories: Category[] = [
     id: 'quartzo',
     label: 'Quartzo',
     items: [
-      { name: 'Branco Absoluto', tone: 'from-[#f7f6f1] to-[#cfcdc4]' },
+      { name: 'Branco Absoluto', tone: 'from-[#f7f6f1] to-[#cfcdc4]', image: '/materials/branco_absoluto.png' },
       { name: 'Cinza Concreto',  tone: 'from-[#bcbab5] to-[#6f6e6a]' },
       { name: 'Calacatta Quartzo', tone: 'from-[#f3eee2] to-[#aea08b]' },
       { name: 'Silestone Eternal', tone: 'from-[#efece4] to-[#a89e8b]' },
@@ -78,7 +78,7 @@ const categories: Category[] = [
     id: 'ultracompacto',
     label: 'Lâmina Ultracompacta',
     items: [
-      { name: 'Dekton® Aura',    tone: 'from-[#f4f1ea] to-[#bdb6a4]' },
+      { name: 'Dekton® Aura',    tone: 'from-[#f4f1ea] to-[#bdb6a4]', image: '/materials/dekton_aura.png' },
       { name: 'Dekton® Kelya',   tone: 'from-[#41403d] to-[#1a1a18]' },
       { name: 'Neolith® Calacatta', tone: 'from-[#f3eee3] to-[#b4a78a]' },
       { name: 'Neolith® Iron Moss', tone: 'from-[#3b3d35] to-[#181a15]' },
@@ -147,7 +147,15 @@ export default function Materials() {
                 whileHover={{ y: -4 }}
                 className={`group relative aspect-square overflow-hidden border border-[var(--line)] stone-base bg-gradient-to-br ${s.tone} transition-shadow hover:shadow-[0_20px_40px_-20px_rgba(0,0,0,0.35)]`}
               >
-                <figcaption className="absolute inset-x-0 bottom-0 bg-white py-3 px-4 border-t border-[var(--line)]">
+                {s.image && (
+                  <img
+                    src={s.image}
+                    alt={s.name}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                )}
+                <figcaption className="absolute inset-x-0 bottom-0 bg-white py-3 px-4 border-t border-[var(--line)] z-10">
                   <span className="text-sm font-medium text-[var(--ink)]">{s.name}</span>
                 </figcaption>
               </motion.figure>
