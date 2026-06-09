@@ -13,6 +13,7 @@ const leadSchema = z.object({
   materiais: z.string().max(200).optional().or(z.literal('')),
   mensagem: z.string().max(2000).optional().or(z.literal('')),
   origem: z.string().max(60).optional().or(z.literal('')),
+  created_at: z.string().optional(),
 });
 
 function blank(v: string | undefined) {
@@ -39,19 +40,26 @@ export async function POST(req: NextRequest) {
   const d = parsed.data;
 
   const supabase = getServiceSupabase();
+  
+  const insertPayload: Record<string, any> = {
+    nome: d.nome.trim(),
+    telefone: d.telefone.trim(),
+    email: blank(d.email),
+    cidade: blank(d.cidade),
+    tipo_obra: blank(d.tipo_obra),
+    materiais: blank(d.materiais),
+    mensagem: blank(d.mensagem),
+    origem: blank(d.origem) ?? 'site',
+    status: 'novo',
+  };
+
+  if (d.created_at) {
+    insertPayload.created_at = d.created_at;
+  }
+
   const { data, error } = await supabase
     .from('leads')
-    .insert({
-      nome: d.nome.trim(),
-      telefone: d.telefone.trim(),
-      email: blank(d.email),
-      cidade: blank(d.cidade),
-      tipo_obra: blank(d.tipo_obra),
-      materiais: blank(d.materiais),
-      mensagem: blank(d.mensagem),
-      origem: blank(d.origem) ?? 'site',
-      status: 'novo',
-    })
+    .insert(insertPayload)
     .select('id')
     .single();
 
