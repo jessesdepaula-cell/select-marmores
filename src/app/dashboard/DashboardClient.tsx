@@ -15,6 +15,8 @@ import {
   TrendingUp,
   UserPlus,
   Loader2,
+  Globe,
+  Layers,
 } from 'lucide-react';
 import type { Lead, LeadStatus } from '@/lib/supabase';
 
@@ -42,6 +44,24 @@ const ORIGEM_LABELS: Record<string, string> = {
 function origemLabel(o: string | null | undefined): string {
   if (!o) return '—';
   return ORIGEM_LABELS[o] ?? o;
+}
+
+function getLeadChannel(o: string | null | undefined): 'site' | 'meta' {
+  if (!o) return 'site';
+  const lower = o.trim().toLowerCase();
+  if (
+    lower === 'facebook' ||
+    lower === 'instagram' ||
+    lower === 'facebook/instagram' ||
+    lower === 'fb' ||
+    lower === 'ig' ||
+    lower === 'meta' ||
+    lower.includes('meta ads') ||
+    lower.includes('ads')
+  ) {
+    return 'meta';
+  }
+  return 'site';
 }
 
 function fmtBRL(n: number) {
@@ -130,7 +150,8 @@ export default function DashboardClient({
     return leads.filter((l) => {
       if (statusFilter !== 'todos' && l.status !== statusFilter) return false;
       if (!term) return true;
-      return [l.nome, l.telefone, l.email, l.cidade, l.materiais, l.mensagem, l.tipo_obra]
+      const channel = getLeadChannel(l.origem) === 'meta' ? 'meta ads' : 'site';
+      return [l.nome, l.telefone, l.email, l.cidade, l.materiais, l.mensagem, l.tipo_obra, channel]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(term));
     });
@@ -323,6 +344,7 @@ export default function DashboardClient({
                     <th className="py-3 px-4">Nome</th>
                     <th className="py-3 px-4">Telefone</th>
                     <th className="py-3 px-4">Cidade</th>
+                    <th className="py-3 px-4">Canal</th>
                     <th className="py-3 px-4">Origem</th>
                     <th className="py-3 px-4">Obra</th>
                     <th className="py-3 px-4"></th>
@@ -352,6 +374,19 @@ export default function DashboardClient({
                       <td className="py-3 px-4 font-medium">{l.nome}</td>
                       <td className="py-3 px-4">{l.telefone}</td>
                       <td className="py-3 px-4">{l.cidade ?? '—'}</td>
+                      <td className="py-3 px-4">
+                        {getLeadChannel(l.origem) === 'meta' ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60 whitespace-nowrap">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                            Meta Ads
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700 border border-zinc-200/60 whitespace-nowrap">
+                            <span className="w-1.5 h-1.5 rounded-full bg-zinc-500" />
+                            Site
+                          </span>
+                        )}
+                      </td>
                       <td className="py-3 px-4">
                         <span className="inline-block text-[11px] px-2 py-0.5 rounded-full bg-[var(--bg-soft)] border border-[var(--line)] text-[var(--ink-soft)] whitespace-nowrap">
                           {origemLabel(l.origem)}
@@ -631,7 +666,20 @@ function LeadDrawer({
               </Row>
             )}
             {lead.cidade && <Row icon={<MapPin size={14} />} label="Cidade">{lead.cidade}</Row>}
-            <Row icon={<Calendar size={14} />} label="Origem">{origemLabel(lead.origem)}</Row>
+            <Row icon={<Layers size={14} />} label="Canal">
+              {getLeadChannel(lead.origem) === 'meta' ? (
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60 whitespace-nowrap">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
+                  Meta Ads
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-700 border border-zinc-200/60 whitespace-nowrap">
+                  <span className="w-1.5 h-1.5 rounded-full bg-zinc-500" />
+                  Site
+                </span>
+              )}
+            </Row>
+            <Row icon={<Calendar size={14} />} label="Origem Detalhada">{origemLabel(lead.origem)}</Row>
           </div>
 
           {(lead.tipo_obra || lead.materiais) && (
